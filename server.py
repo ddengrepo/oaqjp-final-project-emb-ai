@@ -1,3 +1,4 @@
+"""This module defines a Flask web application for emotion detection."""
 from flask import Flask, request, render_template, jsonify
 from EmotionDetection.emotion_detection import emotion_detector
 
@@ -5,14 +6,18 @@ app = Flask('Emotion Detector')
 
 @app.route('/emotionDetector')
 def emotion_analyzer():
+    """Analyzes the emotion of text provided in the request.
+
+    Returns:
+        jsonify: A JSON response containing the emotion analysis results
+                 or an error message.
+    """
     text_to_analyze = request.args.get('textToAnalyze')
     response = emotion_detector(text_to_analyze)
-    
-    if len(text_to_analyze) == 0:
-        return 'Please provide an input'
-    elif response is None:
-        return 'Invalid input ! Try again'
-    return response
+
+    if response is None:
+        return jsonify({'error': 'Invalid input ! Try again'}), 400
+    return jsonify(response)
 
 @app.route("/")
 def render_index_page():
@@ -24,6 +29,6 @@ def render_index_page():
 if __name__ == "__main__":
     app.run(
         host='0.0.0.0',
-        port = 5000,
-        debug=True # Added debug mode for easier development
+        port=5000,
+        debug=True  # Added debug mode for easier development
     )
